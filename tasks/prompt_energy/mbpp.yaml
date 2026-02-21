@@ -1,0 +1,3 @@
+include: ../../lm-evaluation-harness/lm_eval/tasks/mbpp/mbpp.yaml
+task: pe_mbpp
+doc_to_text: !function prompt_utils.mbpp_doc_to_text

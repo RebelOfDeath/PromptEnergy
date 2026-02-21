@@ -1,0 +1,3 @@
+include: ../../lm-evaluation-harness/lm_eval/tasks/humaneval/humaneval.yaml
+task: pe_humaneval
+doc_to_text: !function prompt_utils.humaneval_doc_to_text
