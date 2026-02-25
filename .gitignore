@@ -5,7 +5,6 @@
 *.pyo
 *.pyd
 
-/outputs/
 /logs/
 /runs/
 /data/

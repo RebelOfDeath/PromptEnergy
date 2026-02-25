@@ -5,40 +5,23 @@ project:
 models:
   - id: bigcode/starcoder2-3b
     backend: hf
-#  - id: bigcode/starcoder2-7b
-#    backend: hf
-#  - id: bigcode/starcoder2-15b
-#    backend: hf
-#  - id: Qwen/CodeQwen1.5-7B
-#    backend: hf
-#  - id: codellama/CodeLlama-7b-Instruct-hf
-#    backend: hf
 
 tasks:
-  - group: human_eval
+  - group: humaneval_custom
     ids:
-      - pe_humaneval
-#      - pe_humaneval_instruct
-#  - group: mbpp
-#    ids:
-#      - pe_mbpp
-#  - group: code_x_glue
-#    ids:
-#      - pe_code2text_java
-#      - pe_code2text_python
+      - humaneval_custom  # Uses custom pipeline with edit_distance, codebleu, rouge_l
 
 prompt_conditions:
   - id: baseline_single_shot
-#  - id: polite_single_shot
-#  - id: think_step_by_step
-#  - id: answer_only_no_expl
-#  - id: few_shot_1
+  - id: polite_single_shot
+  - id: think_step_by_step
+  - id: answer_only_no_expl
 
 runner:
   lm_eval_harness_path: lm-evaluation-harness
   energi_bridge_path: EnergiBridge
   include_path: tasks/prompt_energy
-  device: auto
+  device: cuda
   seed: 42
   repeats: 3
 

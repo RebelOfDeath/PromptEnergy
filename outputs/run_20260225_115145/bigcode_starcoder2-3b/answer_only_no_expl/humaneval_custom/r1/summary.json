@@ -1,0 +1,14 @@
+{
+  "model_id": "bigcode/starcoder2-3b",
+  "condition": "answer_only_no_expl",
+  "num_examples": 164,
+  "metrics": {
+    "mean_edit_distance": 498.2378048780488,
+    "mean_edit_distance_normalized": 0.8687168357441911,
+    "mean_levenshtein_ratio": 0.2146129223508951,
+    "mean_rouge_l_precision": 0.0745861759426886,
+    "mean_rouge_l_recall": 0.2987336749968358,
+    "mean_rouge_l_fmeasure": 0.10425148465653426,
+    "mean_codebleu": 0.012190799577032783
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "model_id": "bigcode/starcoder2-3b",
+  "condition": "polite_single_shot",
+  "num_examples": 164,
+  "metrics": {
+    "mean_edit_distance": 530.4146341463414,
+    "mean_edit_distance_normalized": 0.9427478622834353,
+    "mean_levenshtein_ratio": 0.09571068627089563,
+    "mean_rouge_l_precision": 0.035114659618259624,
+    "mean_rouge_l_recall": 0.1855842067901778,
+    "mean_rouge_l_fmeasure": 0.04870731359554034,
+    "mean_codebleu": 0.0025841580252026234
+  }
+}

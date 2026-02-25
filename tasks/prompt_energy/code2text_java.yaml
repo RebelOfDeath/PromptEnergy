@@ -1,3 +1,0 @@
-include: ../../lm-evaluation-harness/lm_eval/tasks/code_x_glue/code-text/java.yaml
-task: pe_code2text_java
-doc_to_text: !function prompt_utils.code2text_doc_to_text
