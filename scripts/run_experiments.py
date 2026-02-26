@@ -213,7 +213,7 @@ def main():
     parser.add_argument(
         "--rest-seconds",
         type=float,
-        default=120.0,
+        default=60.0,
         help="Resting period between job runs (seconds). Default: 120s.",
     )
     parser.add_argument(
