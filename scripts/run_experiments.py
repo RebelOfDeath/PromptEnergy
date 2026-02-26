@@ -195,7 +195,7 @@ def main():
 
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--run-id", default=None)
-    parser.add_argument("--limit", type=int, default=10)
+    parser.add_argument("--limit", type=int, default=1)
     parser.add_argument("--max-new-tokens", type=int, default=1024)
 
     # Randomization / resting controls

@@ -13,98 +13,26 @@
     "model_id": "bigcode/starcoder2-3b",
     "backend": "hf",
     "trust_remote_code": false,
-    "condition": "baseline_single_shot",
+    "condition": "polite_single_shot",
     "task": "humaneval_custom",
-    "repeat": 2
+    "repeat": 1
   },
   {
     "job_id": 2,
     "model_id": "bigcode/starcoder2-3b",
     "backend": "hf",
     "trust_remote_code": false,
-    "condition": "baseline_single_shot",
+    "condition": "think_step_by_step",
     "task": "humaneval_custom",
-    "repeat": 3
+    "repeat": 1
   },
   {
     "job_id": 3,
     "model_id": "bigcode/starcoder2-3b",
     "backend": "hf",
     "trust_remote_code": false,
-    "condition": "polite_single_shot",
-    "task": "humaneval_custom",
-    "repeat": 1
-  },
-  {
-    "job_id": 4,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "polite_single_shot",
-    "task": "humaneval_custom",
-    "repeat": 2
-  },
-  {
-    "job_id": 5,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "polite_single_shot",
-    "task": "humaneval_custom",
-    "repeat": 3
-  },
-  {
-    "job_id": 6,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "think_step_by_step",
-    "task": "humaneval_custom",
-    "repeat": 1
-  },
-  {
-    "job_id": 7,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "think_step_by_step",
-    "task": "humaneval_custom",
-    "repeat": 2
-  },
-  {
-    "job_id": 8,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "think_step_by_step",
-    "task": "humaneval_custom",
-    "repeat": 3
-  },
-  {
-    "job_id": 9,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
     "condition": "answer_only_no_expl",
     "task": "humaneval_custom",
     "repeat": 1
-  },
-  {
-    "job_id": 10,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "answer_only_no_expl",
-    "task": "humaneval_custom",
-    "repeat": 2
-  },
-  {
-    "job_id": 11,
-    "model_id": "bigcode/starcoder2-3b",
-    "backend": "hf",
-    "trust_remote_code": false,
-    "condition": "answer_only_no_expl",
-    "task": "humaneval_custom",
-    "repeat": 3
   }
 ]

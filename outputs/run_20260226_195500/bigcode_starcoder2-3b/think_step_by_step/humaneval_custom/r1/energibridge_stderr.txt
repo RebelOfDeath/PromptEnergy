@@ -1,0 +1,49 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+Traceback (most recent call last):
+  File "C:\Users\anton\Documents\dsait\Q3\sse\PromptEnergy\scripts\run_humaneval_custom.py", line 578, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\anton\Documents\dsait\Q3\sse\PromptEnergy\scripts\run_humaneval_custom.py", line 497, in main
+    summary = run_evaluation_direct(
+        model_id=model_id,
+    ...<6 lines>...
+        trust_remote_code=trust_remote_code,
+    )
+  File "C:\Users\anton\Documents\dsait\Q3\sse\PromptEnergy\scripts\run_humaneval_custom.py", line 328, in run_evaluation_direct
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+    ...<2 lines>...
+        trust_remote_code=trust_remote_code,
+    )
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\models\auto\auto_factory.py", line 604, in from_pretrained
+    return model_class.from_pretrained(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        pretrained_model_name_or_path, *model_args, config=config, **hub_kwargs, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\modeling_utils.py", line 288, in _wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\modeling_utils.py", line 5179, in from_pretrained
+    ) = cls._load_pretrained_model(
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        model,
+        ^^^^^^
+    ...<13 lines>...
+        weights_only=weights_only,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\modeling_utils.py", line 5600, in _load_pretrained_model
+    caching_allocator_warmup(model_to_load, expanded_device_map, hf_quantizer)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\modeling_utils.py", line 6218, in caching_allocator_warmup
+    index = device.index if device.index is not None else torch_accelerator_module.current_device()
+                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\cuda\__init__.py", line 1069, in current_device
+    _lazy_init()
+    ~~~~~~~~~~^^
+  File "C:\Users\anton\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\cuda\__init__.py", line 403, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+AssertionError: Torch not compiled with CUDA enabled

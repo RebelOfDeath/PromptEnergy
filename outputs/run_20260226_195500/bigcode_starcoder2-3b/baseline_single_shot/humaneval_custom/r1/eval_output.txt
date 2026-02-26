@@ -1,0 +1,2 @@
+Running job 0: bigcode/starcoder2-3b | baseline_single_shot | repeat 1
+Loading model: bigcode/starcoder2-3b
