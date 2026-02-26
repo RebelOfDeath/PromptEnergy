@@ -18,7 +18,20 @@ from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from rouge_score import rouge_scorer
 import Levenshtein
+from transformers import StoppingCriteria, StoppingCriteriaList
 
+class StopWordCriteria(StoppingCriteria):
+    def __init__(self, tokenizer, stop_words):
+        self.tokenizer = tokenizer
+        self.stop_words = stop_words
+
+    def __call__(self, input_ids, scores, **kwargs):
+        # Decode only the last 20 tokens to save compute
+        tail_text = self.tokenizer.decode(input_ids[0][-20:], skip_special_tokens=True)
+        for stop_word in self.stop_words:
+            if stop_word in tail_text:
+                return True
+        return False
 
 def safe_name(value: str) -> str:
     """Convert string to safe filename."""
@@ -42,16 +55,18 @@ def parse_energy_joules(stdout: str) -> float | None:
 def apply_prompt_condition(text: str, condition: str) -> str:
     """Apply prompt condition formatting."""
     if condition == "polite_single_shot":
-        return f"Please help with writing the following function.\n\n{text}\n\n Give your answer in a python code block, Thanks!"
+        return f"Please help with writing the following function.\n\n{text}\n\nGive your answer strictly inside a ```python\n``` code block, Thanks!"
+
     if condition == "think_step_by_step":
         return (
             f"{text}\n\n"
-            "Think step-by-step. First, write your reasoning. Provide your final output in a python code block."
+            "Think step-by-step. First, write your reasoning. Then, provide your final output strictly inside a ```python\n``` code block."
         )
+
     if condition == "answer_only_no_expl":
-        return f"Do not provide explanations, complete the following function\n\n{text}"
-    # baseline_single_shot or default
-    return text
+        return f"Do not provide explanations, complete the following function.\n\n{text}\n\nOutput ONLY the code strictly inside a ```python\n``` code block."
+
+    return f"{text}\n\nPlease output your solution strictly inside a ```python\n``` code block."
 
 
 def extract_code_from_response(response: str, prompt: str) -> str:
@@ -227,6 +242,8 @@ def generate_response(
 ) -> str:
     """Generate response from the model."""
     inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    stop_words = ["\n```\n", "\n```", "\nif __name__", "\nclass "]
+    stopping_criteria = StoppingCriteriaList([StopWordCriteria(tokenizer, stop_words)])
 
     with torch.no_grad():
         if temperature == 0.0:
@@ -235,6 +252,7 @@ def generate_response(
                 max_new_tokens=max_new_tokens,
                 do_sample=False,
                 pad_token_id=tokenizer.eos_token_id,
+                stopping_criteria=stopping_criteria,
             )
         else:
             outputs = model.generate(
@@ -243,6 +261,7 @@ def generate_response(
                 do_sample=True,
                 temperature=temperature,
                 pad_token_id=tokenizer.eos_token_id,
+                stopping_criteria=stopping_criteria,
             )
 
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
