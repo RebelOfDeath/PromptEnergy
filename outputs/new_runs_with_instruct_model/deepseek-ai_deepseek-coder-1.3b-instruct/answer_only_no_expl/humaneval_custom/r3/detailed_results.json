@@ -1,0 +1,87 @@
+[
+  {
+    "task_id": "HumanEval/0",
+    "prompt": "Do not provide explanations, complete the following function\n\nfrom typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n\n\nProvide your answer in the following format:\n```python\n<your code here>\n```.",
+    "raw_response": "Here is the complete function:\n\n```python\nfrom typing import List\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False\n```\n\nThis function uses two nested loops to check every pair of numbers in the list. If the absolute difference between any two numbers is less than the given threshold, it returns True. If no such pair of numbers is found after checking all pairs, it returns False.\n",
+    "extracted_code": "from typing import List\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n    for i in range(len(numbers)):\n        for j in range(i + 1, len(numbers)):\n            if abs(numbers[i] - numbers[j]) < threshold:\n                return True\n    return False",
+    "reference": "from typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    \"\"\" Check if in given list of numbers, are any two numbers closer to each other than\n    given threshold.\n    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)\n    False\n    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)\n    True\n    \"\"\"\n    for idx, elem in enumerate(numbers):\n        for idx2, elem2 in enumerate(numbers):\n            if idx != idx2:\n                distance = abs(elem - elem2)\n                if distance < threshold:\n                    return True\n\n    return False\n",
+    "metrics": {
+      "edit_distance": 122,
+      "edit_distance_normalized": 0.20333333333333334,
+      "levenshtein_ratio": 0.8642413487133984,
+      "rouge_l_precision": 0.8620689655172413,
+      "rouge_l_recall": 0.8522727272727273,
+      "rouge_l_fmeasure": 0.8571428571428572,
+      "codebleu": 0.7132683715503976,
+      "codebleu_ngram_match": 0.8656716417910447
+    }
+  },
+  {
+    "task_id": "HumanEval/1",
+    "prompt": "Do not provide explanations, complete the following function\n\nfrom typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\" Input to this function is a string containing multiple groups of nested parentheses. Your goal is to\n    separate those group into separate strings and return the list of those.\n    Separate groups are balanced (each open brace is properly closed) and not nested within each other\n    Ignore any spaces in the input string.\n    >>> separate_paren_groups('( ) (( )) (( )( ))')\n    ['()', '(())', '(()())']\n    \"\"\"\n\n\nProvide your answer in the following format:\n```python\n<your code here>\n```.",
+    "raw_response": "Here is the complete function:\n\n```python\nfrom typing import List\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")\n    groups = []\n    count = 0\n    start = 0\n    for i in range(len(paren_string)):\n        if paren_string[i] == '(':\n            count += 1\n        elif paren_string[i] == ')':\n            count -= 1\n            if count == 0:\n                groups.append(paren_string[start:i+1])\n                start = i+1\n    return groups\n```\n\nThis function works by iterating over the string and keeping track of the number of open parentheses. When it encounters a close parenthesis, it decreases the count. If the count reaches zero, it means we have found a complete group of parentheses, so it adds the group to the list and starts the next group.\n",
+    "extracted_code": "from typing import List\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    paren_string = paren_string.replace(\" \", \"\")\n    groups = []\n    count = 0\n    start = 0\n    for i in range(len(paren_string)):\n        if paren_string[i] == '(':\n            count += 1\n        elif paren_string[i] == ')':\n            count -= 1\n            if count == 0:\n                groups.append(paren_string[start:i+1])\n                start = i+1\n    return groups",
+    "reference": "from typing import List\n\n\ndef separate_paren_groups(paren_string: str) -> List[str]:\n    \"\"\" Input to this function is a string containing multiple groups of nested parentheses. Your goal is to\n    separate those group into separate strings and return the list of those.\n    Separate groups are balanced (each open brace is properly closed) and not nested within each other\n    Ignore any spaces in the input string.\n    >>> separate_paren_groups('( ) (( )) (( )( ))')\n    ['()', '(())', '(()())']\n    \"\"\"\n    result = []\n    current_string = []\n    current_depth = 0\n\n    for c in paren_string:\n        if c == '(':\n            current_depth += 1\n            current_string.append(c)\n        elif c == ')':\n            current_depth -= 1\n            current_string.append(c)\n\n            if current_depth == 0:\n                result.append(''.join(current_string))\n                current_string.clear()\n\n    return result\n",
+    "metrics": {
+      "edit_distance": 560,
+      "edit_distance_normalized": 0.6054054054054054,
+      "levenshtein_ratio": 0.5483405483405484,
+      "rouge_l_precision": 0.5263157894736842,
+      "rouge_l_recall": 0.2702702702702703,
+      "rouge_l_fmeasure": 0.35714285714285715,
+      "codebleu": 0.07801870557018524,
+      "codebleu_ngram_match": 0.6274509803921569
+    }
+  },
+  {
+    "task_id": "HumanEval/2",
+    "prompt": "Do not provide explanations, complete the following function\n\n\n\ndef truncate_number(number: float) -> float:\n    \"\"\" Given a positive floating point number, it can be decomposed into\n    and integer part (largest integer smaller than given number) and decimals\n    (leftover part always smaller than 1).\n\n    Return the decimal part of the number.\n    >>> truncate_number(3.5)\n    0.5\n    \"\"\"\n\n\nProvide your answer in the following format:\n```python\n<your code here>\n```.",
+    "raw_response": "```python\ndef truncate_number(number: float) -> float:\n    return number - int(number)\n```\n",
+    "extracted_code": "def truncate_number(number: float) -> float:\n    return number - int(number)",
+    "reference": "\n\ndef truncate_number(number: float) -> float:\n    \"\"\" Given a positive floating point number, it can be decomposed into\n    and integer part (largest integer smaller than given number) and decimals\n    (leftover part always smaller than 1).\n\n    Return the decimal part of the number.\n    >>> truncate_number(3.5)\n    0.5\n    \"\"\"\n    return number % 1.0\n",
+    "metrics": {
+      "edit_distance": 282,
+      "edit_distance_normalized": 0.7943661971830986,
+      "levenshtein_ratio": 0.33874709976798145,
+      "rouge_l_precision": 0.9,
+      "rouge_l_recall": 0.17647058823529413,
+      "rouge_l_fmeasure": 0.2950819672131148,
+      "codebleu": 0.006028533514435543,
+      "codebleu_ngram_match": 0.7777777777777778
+    }
+  },
+  {
+    "task_id": "HumanEval/3",
+    "prompt": "Do not provide explanations, complete the following function\n\nfrom typing import List\n\n\ndef below_zero(operations: List[int]) -> bool:\n    \"\"\" You're given a list of deposit and withdrawal operations on a bank account that starts with\n    zero balance. Your task is to detect if at any point the balance of account fallls below zero, and\n    at that point function should return True. Otherwise it should return False.\n    >>> below_zero([1, 2, 3])\n    False\n    >>> below_zero([1, 2, -4, 5])\n    True\n    \"\"\"\n\n\nProvide your answer in the following format:\n```python\n<your code here>\n```.",
+    "raw_response": "Here is the complete function:\n\n```python\nfrom typing import List\n\ndef below_zero(operations: List[int]) -> bool:\n    balance = 0\n    for op in operations:\n        balance += op\n        if balance < 0:\n            return True\n    return False\n```\n\nThis function iterates over the list of operations, adding each operation to the current balance. If at any point the balance falls below zero, it immediately returns `True`. If it goes through all the operations without finding a balance below zero, it returns `False`.\n",
+    "extracted_code": "from typing import List\n\ndef below_zero(operations: List[int]) -> bool:\n    balance = 0\n    for op in operations:\n        balance += op\n        if balance < 0:\n            return True\n    return False",
+    "reference": "from typing import List\n\n\ndef below_zero(operations: List[int]) -> bool:\n    \"\"\" You're given a list of deposit and withdrawal operations on a bank account that starts with\n    zero balance. Your task is to detect if at any point the balance of account fallls below zero, and\n    at that point function should return True. Otherwise it should return False.\n    >>> below_zero([1, 2, 3])\n    False\n    >>> below_zero([1, 2, -4, 5])\n    True\n    \"\"\"\n    balance = 0\n\n    for op in operations:\n        balance += op\n        if balance < 0:\n            return True\n\n    return False\n",
+    "metrics": {
+      "edit_distance": 379,
+      "edit_distance_normalized": 0.6545768566493955,
+      "levenshtein_ratio": 0.5134788189987163,
+      "rouge_l_precision": 1.0,
+      "rouge_l_recall": 0.2988505747126437,
+      "rouge_l_fmeasure": 0.46017699115044247,
+      "codebleu": 0.10164634961139175,
+      "codebleu_ngram_match": 1.0
+    }
+  },
+  {
+    "task_id": "HumanEval/4",
+    "prompt": "Do not provide explanations, complete the following function\n\nfrom typing import List\n\n\ndef mean_absolute_deviation(numbers: List[float]) -> float:\n    \"\"\" For a given list of input numbers, calculate Mean Absolute Deviation\n    around the mean of this dataset.\n    Mean Absolute Deviation is the average absolute difference between each\n    element and a centerpoint (mean in this case):\n    MAD = average | x - x_mean |\n    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])\n    1.0\n    \"\"\"\n\n\nProvide your answer in the following format:\n```python\n<your code here>\n```.",
+    "raw_response": "Here is the complete function:\n\n```python\nfrom typing import List\n\ndef mean_absolute_deviation(numbers: List[float]) -> float:\n    mean = sum(numbers) / len(numbers)\n    return sum(abs(x - mean) for x in numbers) / len(numbers)\n```\n",
+    "extracted_code": "from typing import List\n\ndef mean_absolute_deviation(numbers: List[float]) -> float:\n    mean = sum(numbers) / len(numbers)\n    return sum(abs(x - mean) for x in numbers) / len(numbers)",
+    "reference": "from typing import List\n\n\ndef mean_absolute_deviation(numbers: List[float]) -> float:\n    \"\"\" For a given list of input numbers, calculate Mean Absolute Deviation\n    around the mean of this dataset.\n    Mean Absolute Deviation is the average absolute difference between each\n    element and a centerpoint (mean in this case):\n    MAD = average | x - x_mean |\n    >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])\n    1.0\n    \"\"\"\n    mean = sum(numbers) / len(numbers)\n    return sum(abs(x - mean) for x in numbers) / len(numbers)\n",
+    "metrics": {
+      "edit_distance": 346,
+      "edit_distance_normalized": 0.6516007532956686,
+      "levenshtein_ratio": 0.5167597765363128,
+      "rouge_l_precision": 1.0,
+      "rouge_l_recall": 0.345679012345679,
+      "rouge_l_fmeasure": 0.5137614678899083,
+      "codebleu": 0.11097191190961815,
+      "codebleu_ngram_match": 1.0
+    }
+  }
+]

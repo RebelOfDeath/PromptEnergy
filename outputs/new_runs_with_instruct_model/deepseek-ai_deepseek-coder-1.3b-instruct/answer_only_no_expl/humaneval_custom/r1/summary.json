@@ -1,0 +1,14 @@
+{
+  "model_id": "deepseek-ai/deepseek-coder-1.3b-instruct",
+  "condition": "answer_only_no_expl",
+  "num_examples": 5,
+  "metrics": {
+    "mean_edit_distance": 284.6,
+    "mean_edit_distance_normalized": 0.4313105970640879,
+    "mean_levenshtein_ratio": 0.6833847792100233,
+    "mean_rouge_l_precision": 0.8698338137432831,
+    "mean_rouge_l_recall": 0.5455713796653621,
+    "mean_rouge_l_fmeasure": 0.6298016974103111,
+    "mean_codebleu": 0.39235524268536176
+  }
+}

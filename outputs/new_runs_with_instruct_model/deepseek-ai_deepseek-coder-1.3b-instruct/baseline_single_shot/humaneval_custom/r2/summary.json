@@ -1,0 +1,14 @@
+{
+  "model_id": "deepseek-ai/deepseek-coder-1.3b-instruct",
+  "condition": "baseline_single_shot",
+  "num_examples": 5,
+  "metrics": {
+    "mean_edit_distance": 284.2,
+    "mean_edit_distance_normalized": 0.43076104751453836,
+    "mean_levenshtein_ratio": 0.68324941320311,
+    "mean_rouge_l_precision": 0.8698338137432831,
+    "mean_rouge_l_recall": 0.5455713796653621,
+    "mean_rouge_l_fmeasure": 0.6298016974103111,
+    "mean_codebleu": 0.39235524268536176
+  }
+}

@@ -40,18 +40,20 @@ def parse_energy_joules(stdout: str) -> float | None:
 
 
 def apply_prompt_condition(text: str, condition: str) -> str:
-    """Apply prompt condition formatting."""
+    """Apply prompt condition formatting with explicit format instructions."""
+    format_instruction = "\n\nProvide your answer in the following format:\n```python\n<your code here>\n```"
+
     if condition == "polite_single_shot":
-        return f"Please help with writing the following function.\n\n{text}\n\n Give your answer in a python code block, Thanks!"
+        return f"Please help with writing the following function.\n\n{text}{format_instruction}\n\nThanks!"
     if condition == "think_step_by_step":
         return (
             f"{text}\n\n"
-            "Think step-by-step. First, write your reasoning. Provide your final output in a python code block."
+            f"Think step-by-step. First, write your reasoning. Then provide your final output in a python code block.{format_instruction}"
         )
     if condition == "answer_only_no_expl":
-        return f"Do not provide explanations, complete the following function\n\n{text}"
+        return f"Do not provide explanations, complete the following function\n\n{text}{format_instruction}."
     # baseline_single_shot or default
-    return text
+    return f"{text}{format_instruction}"
 
 
 def extract_code_from_response(response: str, prompt: str) -> str:
@@ -221,32 +223,54 @@ def generate_response(
     model: Any,
     tokenizer: Any,
     prompt: str,
-    max_new_tokens: int = 512,
-    temperature: float = 0.0,
+    max_new_tokens: int = 1024,
+    temperature: float = 0.2,
     device: str = "cuda",
+    use_chat_template: bool = True,
 ) -> str:
-    """Generate response from the model."""
-    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    """Generate response from the model. Uses chat template for instruct models."""
+
+    if use_chat_template:
+        messages = [{"role": "user", "content": prompt}]
+
+        # Always ask for a dict-like encoding (BatchEncoding)
+        enc = tokenizer.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            return_tensors="pt",
+            return_dict=True,
+        )
+        enc = enc.to(device)
+        input_ids = enc["input_ids"]
+    else:
+        enc = tokenizer(prompt, return_tensors="pt")
+        enc = enc.to(device)
+        input_ids = enc["input_ids"]
+
+    gen_kwargs = dict(
+        max_new_tokens=max_new_tokens,
+        eos_token_id=tokenizer.eos_token_id,
+        pad_token_id=tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id,
+    )
+
+    if temperature == 0.0:
+        gen_kwargs.update(dict(do_sample=False))
+    else:
+        gen_kwargs.update(dict(
+            do_sample=True,
+            temperature=temperature,
+            top_k=50,
+            top_p=0.95,
+        ))
 
     with torch.no_grad():
-        if temperature == 0.0:
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                pad_token_id=tokenizer.eos_token_id,
-            )
-        else:
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                do_sample=True,
-                temperature=temperature,
-                pad_token_id=tokenizer.eos_token_id,
-            )
+        # IMPORTANT: pass encoding as keyword args, not as positional tensor
+        outputs = model.generate(**enc, **gen_kwargs)
 
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return response
+    # Decode only newly generated tokens
+    prompt_len = input_ids.shape[1]
+    response_ids = outputs[0, prompt_len:]
+    return tokenizer.decode(response_ids, skip_special_tokens=True)
 
 
 def run_evaluation_with_energy(
@@ -290,6 +314,8 @@ def run_evaluation_direct(
     max_new_tokens: int = 512,
     limit: int | None = None,
     trust_remote_code: bool = False,
+    use_chat_template: bool = True,
+    torch_dtype: str = "bfloat16",
 ) -> dict:
     """
     Run HumanEval evaluation directly without energy measurement.
@@ -306,9 +332,18 @@ def run_evaluation_direct(
         model_id,
         trust_remote_code=trust_remote_code
     )
+
+    # Determine torch dtype
+    dtype_map = {
+        "bfloat16": torch.bfloat16,
+        "float16": torch.float16,
+        "float32": torch.float32,
+    }
+    dtype = dtype_map.get(torch_dtype, torch.bfloat16)
+
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+        torch_dtype=dtype,
         device_map=device if device == "cuda" else None,
         trust_remote_code=trust_remote_code,
     )
@@ -351,13 +386,14 @@ def run_evaluation_direct(
             model, tokenizer, prompt,
             max_new_tokens=max_new_tokens,
             device=device,
+            use_chat_template=use_chat_template,
         )
 
         # Extract code from response
         extracted_code = extract_code_from_response(response, prompt)
 
         # Get reference
-        reference = get_canonical_solution(doc)
+        reference = doc["prompt"] + get_canonical_solution(doc)
 
         # Compute metrics
         metrics = compute_all_metrics(extracted_code, reference)
@@ -424,6 +460,12 @@ def main() -> int:
     parser.add_argument("--no-energy", action="store_true",
                         help="Run without energy measurement")
     parser.add_argument("--run-id", default=None)
+    parser.add_argument("--use-chat-template", action="store_true", default=True,
+                        help="Use chat template for instruction-tuned models (default: True)")
+    parser.add_argument("--no-chat-template", dest="use_chat_template", action="store_false",
+                        help="Disable chat template (for base models)")
+    parser.add_argument("--torch-dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"],
+                        help="Torch dtype for model (default: bfloat16)")
     args = parser.parse_args()
 
     # Load config
@@ -468,7 +510,7 @@ def main() -> int:
         model_id = job["model_id"]
         condition = job["condition"]
         repeat = job["repeat"]
-        trust_remote_code = bool(job.get("trust_remote_code", False))
+        trust_remote_code = bool(job.get("trust_remote_code", True))
 
         run_dir = run_root / safe_name(model_id) / condition / "humaneval_custom" / f"r{repeat}"
 
@@ -484,6 +526,8 @@ def main() -> int:
             max_new_tokens=args.max_new_tokens,
             limit=args.limit,
             trust_remote_code=trust_remote_code,
+            use_chat_template=args.use_chat_template,
+            torch_dtype=args.torch_dtype,
         )
         end_time = time.time()
 
@@ -533,6 +577,8 @@ def main() -> int:
                     max_new_tokens=args.max_new_tokens,
                     limit=args.limit,
                     trust_remote_code=trust_remote_code,
+                    use_chat_template=args.use_chat_template,
+                    torch_dtype=args.torch_dtype,
                 )
                 end_time = time.time()
 
