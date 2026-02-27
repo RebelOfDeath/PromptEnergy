@@ -216,20 +216,20 @@ To make sure our data wasn't just a one-time fluke, we compared three separate r
 Because the 'shape' and the middle lines (medians) of the three violins match almost perfectly, we can be confident that our energy measurements are consistent and not affected by random background tasks.
 
 ![Consistency of Runs - answer_only_no_expl](img/answer_only_no_expl.png)
-*Figure 7: istribution of system metrics for the answer_only_no_expl prompt across three independent runs.*
+*Figure 7: Distribution of system metrics for the answer_only_no_expl prompt across three independent runs.*
 
 ![Consistency of Runs - baseline_single_shot](img/baseline_sinlge_shot.png)
-*Figure 8: istribution of system metrics for the baseline_single_shot prompt across three independent runs.*
+*Figure 8: Distribution of system metrics for the baseline_single_shot prompt across three independent runs.*
 ![Consistency of Runs - polite_single_shot](img/polite_sinlge_shot.png)
-*Figure 9: istribution of system metrics for the polite_single_shot prompt across three independent runs.*
+*Figure 9: Distribution of system metrics for the polite_single_shot prompt across three independent runs.*
 ![Consistency of Runs - think_step_by_step](img/think_step_by_step.png)
-*Figure 10: istribution of system metrics for the think_step_by_step prompt across three independent runs.*
+*Figure 10: Distribution of system metrics for the think_step_by_step prompt across three independent runs.*
 
 The "Belly" (Width): The wide part of the violin shows where the computer spent most of its time (steady power).
 
 The "Tail" (Height): The thin lines at the top show brief moments when the prompt caused a huge power spike, usually during token generation.
 
-Alignment: All three runs' violins are at the same height on the graph, therefore the energy cost is reproducible.
+All three runs' violins are at the same height on the graph, therefore the energy cost is reproducible.
 
 
 ---
