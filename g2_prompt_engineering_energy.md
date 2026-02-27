@@ -114,6 +114,55 @@ We follow common energy-measurement hygiene to reduce confounding, caused by fac
 
 ## 4. Exploratory Data Analysis (EDA) and Results
 
+### 4.1 Overall Energy Consumption
+Firstly, we analyzed the average energy consumed per strategy across all tasks. As shown in Figure 1, the `think_step_by_step`
+strategy consumed significantly more energy on average compared to the `answer_only_no_expl` strategy, which had the
+lowest energy consumption. The `polite_single_shot` strategy showed a slight increase in energy consumption compared to
+the `baseline_single_shot`. Nevertheless, the difference between the `think_step_by_step` and the other strategy was
+the most pronounced, which prompts us to further investigate the underlying causes.
+
+<p align="center">
+  <img src="./img/g2_avg_energy.png" alt="Average Energy Bar Chart" width="600"/>
+  <br>
+  <i><b>Figure 1:</b> Average Energy Consumed by Prompting Strategy.</i>
+</p>
+
+### 4.2 Power Draw Over Time
+To understand the cause of those differences, we analyzed the power draw over time for both CPU and GPU. As shown in
+Figures 2a and 2b, the `think_step_by_step` strategy exhibited a significantly longer duration of task execution, than the
+rest of the prompts. Which is completely expected given the nature of different prompts. `think-step-by-step` as well as 
+`polite-single-shot` is designed to respond with more tokens, which leads to longer response times and higher energy
+consumption. On the other hand, `answer-only-no-expl` is designed to minimize the number of tokens generated, which
+results in shorter response times and lower energy consumption. Thus, it explains the differences in energy consumption observed in Figure 1.
+<table>
+  <tr>
+    <td align="center"><img src="./img/g2_cpu_power.png" alt="CPU Power Line Graph" width="450"/></td>
+    <td align="center"><img src="./img/g2_gpu_power.png" alt="GPU Power Line Graph" width="450"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Figure 2a:</b> CPU Power Draw (mW) over time.</td>
+    <td align="center"><b>Figure 2b:</b> GPU Power Draw (mW) over time.</td>
+  </tr>
+</table>
+
+During our analysis, we also observed that the `think_step_by_step` seems to have a bit higher peaks in power draw for CPU
+than for example `answer_only_no_expl`. Which leads us to another question: *Do certain prompting strategies require 
+more CPU/GPU-intensive processing than others?* Our hypothesis is that the `think_step_by_step` strategy may require
+more complex reasoning and thus more intensive processing, which could lead to higher power draw. To test it we decided
+to look at the average energy per token for each strategy.
+
+### 4.3 Energy Per Token
+Our initial approach was to take total energy consumed and divide it by the total number of tokens generated.
+<table>
+  <tr>
+    <td align="center"><img src="./img/g2_energy_token_profiling.png" alt="Average Energy per Token Bar Chart" width="450"/></td>
+    <td align="center"><img src="./img/g2_energy_token_baseline.png" alt="Energy Difference per Token vs. Baseline" width="450"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Figure 2a:</b> Average Energy per Token by Prompt Strategy</td>
+    <td align="center"><b>Figure 2b:</b> Energy Difference per Token vs. Baseline After Filtering Out Profiling Energy Draw</td>
+  </tr>
+</table>
 
 
 ---
