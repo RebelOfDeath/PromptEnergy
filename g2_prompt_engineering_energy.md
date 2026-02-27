@@ -165,9 +165,61 @@ Our initial approach was to take total energy consumed and divide it by the tota
 </table>
 
 
+### 4.4 Prompt Efficiency and Return on Investment
+We looked at how much energy each prompt used compared to how good the generated code was. We measured quality in two ways: Levenshtein Ratio (how similar the code text is) and CodeBLEU (how well the logic matches).
+
+#### The Best Trade-offs (Pareto Frontier)
+To find the best balance, we plotted the average scores and drew a Pareto Frontier. The dotted line connects the optimal choices in our test setup.
+
+![Pareto Frontier - Levenshtein](img/pareto_frontier_levenshtein.png)
+*Figure 1: Pareto frontier showing the trade-off between energy and textual similarity (Levenshtein).*
+![Pareto Frontier - CodeBLEU](img/pareto_frontier_codebleu.png)
+*Figure 2: Pareto frontier showing the trade-off between energy and logical similarity (CodeBLEU).*
+
+* The `think_step_by_step` prompt sits far in the top-left. In our setup, it consumed the most energy and resulted in the lowest quality.
+* The dotted line shows our best options. `answer_only_no_expl` was the cheapest way to maintain baseline quality, while `polite_single_shot` cost just a little more energy but provided the highest logical quality (CodeBLEU).
+
+
+#### Relative Impact (Is it Better and Cheaper?)
+
+We also compared everything directly to the baseline to see which quadrant each strategy landed in during our runs.
+
+![Relative Impact - Levenshtein](img/relative_change_levenshtein.png)
+*Figure 3: Relative impact on Levenshtein quality and energy cost compared to the baseline prompt.*
+
+![Relative Impact - CodeBLEU](img/relative_change_codebleu.png)
+*Figure 4: Relative impact on CodeBLEU quality and energy cost compared to the baseline prompt.*
+
+* `think_step_by_step` landed in the "Worse & Expensive" zone for both metrics. 
+* `answer_only_no_expl` landed in the "Better & Cheaper" zone for Levenshtein, saving energy while keeping the same textual quality as the baseline.
+* `polite_single_shot` gave a 50%+ boost to CodeBLEU logic for only a ~15% energy increase compared to the baseline.
+
+#### Efficiency (Quality per 100 Joules)
+
+Finally, we calculated the direct "bang for your buck" to see how many quality points the model scored for every 100 Joules it burned in our environment.
+
+![Efficiency Ratio - Levenshtein](img/levenshtein_similarity_per_100_joules.png)
+*Figure 5: Efficiency ratio showing Levenshtein points achieved per 100 Joules spent.*
+
+![Efficiency Ratio - CodeBLEU](img/codebleu_similarity_per_100_joules.png)
+*Figure 6: Efficiency ratio showing CodeBLEU points achieved per 100 Joules spent.*
+
+* For basic code structure (Levenshtein), telling the model to skip explanations (`answer_only_no_expl`) gave the most points per Joule.
+* For code logic (CodeBLEU), being polite (`polite_single_shot`) was the most efficient strategy in our tests.
+
+#### Then, is the extra energy cost worth it?
+Not necessarily. In our specific test setup, burning more energy did not guarantee better code. Forcing the model to explain itself (`think_step_by_step`) consumed a large amount of extra energy but actually lowered the code quality. For our environment, the better approach was to either force a direct answer (`answer_only_no_expl`) to save power, or add a polite phrase (`polite_single_shot`), which noticeably boosted code logic for an increase in energy cost.
+
 ---
 
-## 5. Limitation (Antonio)
+## 5. Limitations (Antonio)
+There are a few important limitations to keep in mind about how we setup this project:
+
+* We only ran tests on `deepseek-coder-1.3b-instruct`. This is a small model. Massive, state-of-the-art models (like 70B+ parameter ones) might actually get a lot smarter when asked to "think step-by-step", which could make the extra energy cost worth it for them.
+* To measure quality, we used formulas (Levenshtein and CodeBLEU) that check how similar the generated text is to the correct answer. We did not actually run the generated code to see if it compiles or passes tests, so a snippet could score highly but still have a hidden bug.
+* We used the HumanEval dataset, which is basically just small, isolated Python puzzles. Real-world software engineering involves huge, complex files. Prompting strategies might use energy differently when dealing with a massive codebase.
+* We only tested four exact prompt templates. Because LLMs are sensitive to phrasing, just changing "Think step-by-step" to "Let's work this out logically" could completely change the number of tokens the model spits out, which would change the energy footprint.
+* The exact energy values (in Joules) we recorded only apply to the specific computer we used for testing. A different laptop or a massive server GPU will burn a totally different amount of power, even though the general trends should be similar.
 
 ---
 
