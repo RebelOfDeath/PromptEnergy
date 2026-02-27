@@ -148,24 +148,11 @@ results in shorter response times and lower energy consumption. Thus, it explain
 During our analysis, we also observed that the `think_step_by_step` seems to have a bit higher peaks in power draw for CPU
 than for example `answer_only_no_expl`. Which leads us to another question: *Do certain prompting strategies require 
 more CPU/GPU-intensive processing than others?* Our hypothesis is that the `think_step_by_step` strategy may require
-more complex reasoning and thus more intensive processing, which could lead to higher power draw. To test it we decided
-to look at the average energy per token for each strategy.
+more complex reasoning and thus more intensive processing, which could lead to higher power draw. However, to properly test
+this hypothesis, we would need to gather data on profiling and decoding stages separately, which did not happen in this 
+experiment. Therefore, we leave this to future work, as it would require a more detailed analysis of the model's internal processing stages.
 
-### 4.3 Energy Per Token
-Our initial approach was to take total energy consumed and divide it by the total number of tokens generated.
-<table>
-  <tr>
-    <td align="center"><img src="./img/g2_energy_token_profiling.png" alt="Average Energy per Token Bar Chart" width="450"/></td>
-    <td align="center"><img src="./img/g2_energy_token_baseline.png" alt="Energy Difference per Token vs. Baseline" width="450"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Figure 2a:</b> Average Energy per Token by Prompt Strategy</td>
-    <td align="center"><b>Figure 2b:</b> Energy Difference per Token vs. Baseline After Filtering Out Profiling Energy Draw</td>
-  </tr>
-</table>
-
-
-### 4.4 Prompt Efficiency and Return on Investment
+### 4.3 Prompt Efficiency and Return on Investment
 We looked at how much energy each prompt used compared to how good the generated code was. We measured quality in two ways: Levenshtein Ratio (how similar the code text is) and CodeBLEU (how well the logic matches).
 
 #### The Best Trade-offs (Pareto Frontier)
@@ -247,7 +234,7 @@ There are a few important limitations to keep in mind about how we setup this pr
 
 ## 6. Future Work (Pranav)
 This study establishes a baseline to understand the energy costs of prompt engineering; this
-research can always be taken forward in several directions
+research can always be taken forward in several directions:
 
 * Scaling to Large Language Models: This study focuses on a 1.3B-parameter model.
 However, advanced models like  GPT-4 or Llama might handle the “think_step_by_step”
@@ -269,3 +256,6 @@ energy signatures
 Such a tool could automatically suggest the most energy-efficient prompt template for a
 specific task—balancing logical quality with a minimal carbon footprint—essentially
 acting as a "Green Linter" for prompt engineering
+* As mentioned in section 4.2, we observed that `think_step_by_step` had higher CPU power peaks than 
+`answer_only_no_expl`. Future work could involve profiling the model's internal processing stages to determine if 
+certain prompts require more CPU/GPU-intensive computations per token, which could further explain the differences in energy consumption.
