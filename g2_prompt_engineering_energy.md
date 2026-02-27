@@ -99,8 +99,6 @@ For hardware and energy measurement, we used **EnergiBridge** to log CPU and GPU
 - GPU and CPU power in milliwatts/Joules.
 - `tokens_in` and `tokens_out` using the HuggingFace `AutoTokenizer`.
 
-TODO: Add more metrics if you use them!!!!
-
 ### 3.3 Measurement Hygiene - Protocol to Reduce Bias
 We follow common energy-measurement hygiene to reduce confounding, caused by factors such as background processes:
 * **"Zen Mode" Execution:** This was our most critical operational rule. Before any benchmark started, the host machine was put into a strict "Zen mode." All background applications were closed, system notifications, WiFi, and Bluetooth were disabled.
