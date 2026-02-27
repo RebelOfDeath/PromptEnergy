@@ -108,6 +108,10 @@ We follow common energy-measurement hygiene to reduce confounding, caused by fac
 * **Repetitions:** Each (task, condition) pair was executed multiple times to account for variability and ensure statistical significance.
 * **Output Schemas:** We enforced strict output formats to reduce variance in verbosity, which can affect token counts and energy consumption.
 
+
+### 3.4 Code for Reproducibility
+If you would like to repeat our experiment you can clone our repository from [here](https://github.com/RebelOfDeath/PromptEnergy/tree/main)
+
 ---
 
 ## 4. Exploratory Data Analysis (EDA) and Results
@@ -195,7 +199,7 @@ Finally, we calculated the direct "bang for your buck" to see how many quality p
 #### Then, is the extra energy cost worth it?
 Not necessarily. In our specific test setup, burning more energy did not guarantee better code. Forcing the model to explain itself (`think_step_by_step`) consumed a large amount of extra energy but actually lowered the code quality. For our environment, the better approach was to either force a direct answer (`answer_only_no_expl`) to save power, or add a polite phrase (`polite_single_shot`), which noticeably boosted code logic for an increase in energy cost.
 
-### 4.5 Cosnistency of Run Results Across Prompt Types
+### 4.5 Consistency of Run Results Across Prompt Types
 To make sure our data wasn't just a one-time fluke, we compared three separate runs of the same prompt. The violin plots below show the distribution of CPU and GPU power, as well as memory and CPU usage.
 
 Because the 'shape' and the middle lines (medians) of the three violins match almost perfectly, we can be confident that our energy measurements are consistent and not affected by random background tasks.
@@ -219,7 +223,7 @@ All three runs' violins are at the same height on the graph, therefore the energ
 
 ---
 
-## 5. Limitations (Antonio)
+## 5. Limitations
 There are a few important limitations to keep in mind about how we setup this project:
 
 * We only ran tests on `deepseek-coder-1.3b-instruct`. This is a small model. Massive, state-of-the-art models (like 70B+ parameter ones) might actually get a lot smarter when asked to "think step-by-step", which could make the extra energy cost worth it for them.
@@ -230,7 +234,7 @@ There are a few important limitations to keep in mind about how we setup this pr
 
 ---
 
-## 6. Future Work (Pranav)
+## 6. Future Work
 This study establishes a baseline to understand the energy costs of prompt engineering; this
 research can always be taken forward in several directions:
 
