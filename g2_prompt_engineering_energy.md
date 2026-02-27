@@ -210,6 +210,28 @@ Finally, we calculated the direct "bang for your buck" to see how many quality p
 #### Then, is the extra energy cost worth it?
 Not necessarily. In our specific test setup, burning more energy did not guarantee better code. Forcing the model to explain itself (`think_step_by_step`) consumed a large amount of extra energy but actually lowered the code quality. For our environment, the better approach was to either force a direct answer (`answer_only_no_expl`) to save power, or add a polite phrase (`polite_single_shot`), which noticeably boosted code logic for an increase in energy cost.
 
+### 4.5 Cosnistency of Run Results Across Prompt Types
+To make sure our data wasn't just a one-time fluke, we compared three separate runs of the same prompt. The violin plots below show the distribution of CPU and GPU power, as well as memory and CPU usage.
+
+Because the 'shape' and the middle lines (medians) of the three violins match almost perfectly, we can be confident that our energy measurements are consistent and not affected by random background tasks.
+
+![Consistency of Runs - answer_only_no_expl](img/answer_only_no_expl.png)
+*Figure 7: istribution of system metrics for the answer_only_no_expl prompt across three independent runs.*
+
+![Consistency of Runs - baseline_single_shot](img/baseline_sinlge_shot.png)
+*Figure 8: istribution of system metrics for the baseline_single_shot prompt across three independent runs.*
+![Consistency of Runs - polite_single_shot](img/polite_sinlge_shot.png)
+*Figure 9: istribution of system metrics for the polite_single_shot prompt across three independent runs.*
+![Consistency of Runs - think_step_by_step](img/think_step_by_step.png)
+*Figure 10: istribution of system metrics for the think_step_by_step prompt across three independent runs.*
+
+The "Belly" (Width): The wide part of the violin shows where the computer spent most of its time (steady power).
+
+The "Tail" (Height): The thin lines at the top show brief moments when the prompt caused a huge power spike, usually during token generation.
+
+Alignment: All three runs' violins are at the same height on the graph, therefore the energy cost is reproducible.
+
+
 ---
 
 ## 5. Limitations (Antonio)
@@ -224,3 +246,26 @@ There are a few important limitations to keep in mind about how we setup this pr
 ---
 
 ## 6. Future Work (Pranav)
+This study establishes a baseline to understand the energy costs of prompt engineering; this
+research can always be taken forward in several directions
+
+* Scaling to Large Language Models: This study focuses on a 1.3B-parameter model.
+However, advanced models like  GPT-4 or Llama might handle the “think_step_by_step”
+differently. Further investigation needs to take place to determine if the extra energy
+those big models burn actually yields a non-linear increase in code quality or not.
+* The current evaluation relies on textual similarity (CodeBLEU and Levenshtein). A more
+rigorous future approach would integrate functional verification, where energy cost is
+measured against the model's ability to pass unit tests. This would allow for an "Energy
+per Successful Solution" metric, which is more relevant for production-grade software
+engineering.
+* Our tests used HumanEval (Python puzzles). Real programming involves working with
+thousands of lines of code across many files. We should test if these energy patterns
+stay the same when the model has to read a massive codebase before answering.
+* Given that we observed a significant GPU power volatility (~590W peaks), repeating this
+experiment across various hardware architectures (e.g., Apple Silicon vs. NVIDIA H100
+vs. Edge AI chips) would determine if prompting strategies exhibit hardware-specific
+energy signatures
+* A potential long-term goal is the development of an energy-aware prompt optimizer.
+Such a tool could automatically suggest the most energy-efficient prompt template for a
+specific task—balancing logical quality with a minimal carbon footprint—essentially
+acting as a "Green Linter" for prompt engineering
